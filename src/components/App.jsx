@@ -5,6 +5,7 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isX, setIsX] = useState(true);
+  const [winningLine, setWinningLine] = useState([]);
   const [scores, setScores] = useState({
     X: 0,
     O: 0,
@@ -22,8 +23,9 @@ function App() {
     const winner = calcWinner(newBoard);
 
     if (winner && !gameOver) {
-      setCurrStatus(`Winner: ${winner}`);
-      setScores((prev) => ({ ...prev, [winner]: prev[winner] + 1 }));
+      setCurrStatus(`Winner: ${winner.name}`);
+      setScores((prev) => ({ ...prev, [winner.name]: prev[winner.name] + 1 }));
+      setWinningLine(winner.line); // ✅ save winning cells
       setGameOver(true);
     } else if (!winner && newBoard.every(Boolean)) {
       setCurrStatus("It's a Draw!");
@@ -48,7 +50,7 @@ function App() {
     ];
     for (let [a, b, c] of lines) {
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
+        return { name: board[a], line: [a, b, c] }; // ✅ return winner + line
       }
     }
     return null;
@@ -57,6 +59,7 @@ function App() {
   function resetGame() {
     setBoard(Array(9).fill(null));
     setIsX(true);
+    setWinningLine([]); // ✅ reset highlight
     setGameOver(false);
     setCurrStatus("Next player: X"); // reset status
   }
@@ -79,7 +82,11 @@ function App() {
           <button
             key={i}
             onClick={() => handleClick(i)}
-            className="btn btn-outline-dark fw-bold fs-3"
+            className={`btn fw-bold fs-3 ${
+              winningLine.includes(i)
+                ? "btn-success" // ✅ highlight winning cells
+                : "btn-outline-dark"
+            }`}
             style={{ width: "80px", height: "80px" }}
           >
             {a}
