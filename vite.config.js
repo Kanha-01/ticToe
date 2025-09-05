@@ -4,5 +4,6 @@ import react from '@vitejs/plugin-react-swc'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/ticToe/'       // imp for github pages
+  //base: '/ticToe/'       // imp for github pages
+  base: '/'       // imp for rendering using other way
 })
